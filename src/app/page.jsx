@@ -27,14 +27,14 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 antialiased">
       {/* Top Professional Navigation */}
-      <header className="sticky top-0 bg-slate-950/80 backdrop-blur-md border-b border-slate-800 z-40">
+      <header className="sticky top-0 bg-slate-950/80 backdrop-blur-md border-b border-emerald-900/50 z-40">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <span className="text-xl font-black tracking-wider bg-gradient-to-r from-emerald-400 to-teal-500 bg-clip-text text-transparent">
-              MARKETPLACE
+            <span className="text-2xl font-black tracking-widest text-emerald-400">
+              BRANCH
             </span>
-            <span className="text-xs font-bold uppercase tracking-widest bg-slate-800 text-slate-400 px-2.5 py-1 rounded-md border border-slate-700">
-              Admin Controls Active
+            <span className="text-xs font-bold uppercase tracking-widest bg-emerald-900/30 text-emerald-500 px-2.5 py-1 rounded-md border border-emerald-800">
+              Live Menu
             </span>
           </div>
         </div>
@@ -53,7 +53,7 @@ export default function Home() {
 
           {loading ? (
             <div className="flex items-center space-x-2 text-slate-500 font-medium py-10">
-              <div className="w-4 h-4 rounded-full border-2 border-slate-500 border-t-transparent animate-spin"></div>
+              <div className="w-4 h-4 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin"></div>
               <span>Querying inventory tables...</span>
             </div>
           ) : products.length === 0 ? (
