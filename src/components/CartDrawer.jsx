@@ -3,28 +3,27 @@ import { useCartStore } from '@/store/useCartStore';
 
 export default function CartDrawer() {
   const { items, checkoutData, isLoading, removeFromCart } = useCartStore();
-  const isOpen = true; 
-
-  if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-2xl border-l border-gray-200 z-50 flex flex-col pointer-events-auto">
-      <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-        <h2 className="text-xl font-bold">Your Bag</h2>
+    <div className="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden shadow-xl flex flex-col h-full">
+      <div className="p-5 border-b border-slate-800 flex justify-between items-center bg-slate-900">
+        <h2 className="text-lg font-bold text-white">Your Delivery</h2>
       </div>
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+      
+      <div className="flex-1 overflow-y-auto p-5 space-y-4">
         {items.length === 0 ? (
-          <p className="text-gray-500 text-center mt-10">Your bag is empty.</p>
+          <p className="text-slate-500 text-center text-sm">Your bag is empty.</p>
         ) : (
-          items.map((item) => (
-            <div key={item.product_id} className="flex justify-between items-center border-b pb-4 border-gray-50">
+          items.map((item, index) => (
+            // Use index as key to prevent hydration mismatches if IDs duplicate
+            <div key={`${item.product_id}-${index}`} className="flex justify-between items-center border-b border-slate-800 pb-3">
               <div>
-                <p className="font-bold">{item.name}</p>
-                <p className="text-sm text-gray-500">Qty: {item.qty}</p>
+                <p className="text-sm font-bold text-white">{item.name}</p>
+                <p className="text-xs text-emerald-500">Qty: {item.qty} @ ${item.base_sticker_price?.toFixed(2)}</p>
               </div>
               <button 
                 onClick={() => removeFromCart(item.product_id)}
-                className="text-red-500 text-sm font-medium hover:underline"
+                className="text-red-400 text-xs hover:text-red-300"
               >
                 Remove
               </button>
@@ -32,31 +31,26 @@ export default function CartDrawer() {
           ))
         )}
       </div>
+
       {items.length > 0 && (
-        <div className="p-6 bg-gray-50 border-t border-gray-200">
+        <div className="p-5 bg-slate-900 border-t border-slate-800">
           {isLoading ? (
-            <p className="text-center text-gray-500 animate-pulse">Calculating deals...</p>
+            <p className="text-center text-emerald-500 text-sm animate-pulse">Calculating...</p>
           ) : (
             <div className="space-y-3">
-              <div className="flex justify-between text-gray-600">
+              <div className="flex justify-between text-slate-400 text-sm">
                 <span>Subtotal</span>
-                <span>${checkoutData.raw_total?.toFixed(2)}</span>
+                <span className="text-white">${checkoutData.raw_total?.toFixed(2)}</span>
               </div>
-              {checkoutData.discount_applied > 0 && (
-                <div className="flex justify-between text-green-600 font-medium">
-                  <span>Deals Applied</span>
-                  <span>-${checkoutData.discount_applied?.toFixed(2)}</span>
-                </div>
-              )}
-              <div className="pt-4 border-t border-gray-200 flex justify-between items-end">
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Rounded Total</p>
-                  <p className="text-2xl font-black text-black">Total</p>
-                </div>
-                <span className="text-3xl font-black text-black">
-                  ${checkoutData.final_cash_total}
+              <div className="pt-3 border-t border-slate-800 flex justify-between items-center">
+                <p className="text-white font-bold">Total</p>
+                <span className="text-xl font-black text-emerald-400">
+                  ${checkoutData.final_cash_total?.toFixed(2)}
                 </span>
               </div>
+              <button className="w-full mt-4 bg-emerald-600 text-white py-3 rounded-lg font-bold hover:bg-emerald-500 transition-colors">
+                Checkout & Schedule
+              </button>
             </div>
           )}
         </div>
