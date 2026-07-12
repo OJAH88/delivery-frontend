@@ -8,7 +8,6 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetches your real menu items from your Render backend engine
     async function fetchProducts() {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/products`);
@@ -17,57 +16,69 @@ export default function Home() {
           setProducts(data);
         }
       } catch (error) {
-        console.error("Failed to load products:", error);
+        console.error("Failed to load live database products:", error);
       } finally {
         setLoading(false);
       }
     }
-    
-    // For testing before your database is fully packed, we use placeholder items
-    const sampleProducts = [
-      { product_id: 1, name: "Premium Flower - 3.5g", base_sticker_price: 45.00, category: "Flower" },
-      { product_id: 2, name: "Live Resin Cartridge - 1g", base_sticker_price: 55.00, category: "Vapes" },
-      { product_id: 3, name: "100mg THC Gummy Pack", base_sticker_price: 25.00, category: "Edibles" }
-    ];
-
-    fetchProducts().then(() => {
-      // If your DB returns nothing yet, fall back to sample layout data
-      setProducts(prev => prev.length > 0 ? prev : sampleProducts);
-    });
+    fetchProducts();
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 text-black">
-      {/* Top Banner Header */}
-      <header className="sticky top-0 bg-white border-b border-gray-200 z-40">
+    <div className="min-h-screen bg-slate-900 text-slate-100 antialiased">
+      {/* Top Professional Navigation */}
+      <header className="sticky top-0 bg-slate-950/80 backdrop-blur-md border-b border-slate-800 z-40">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-black tracking-tight text-black">HoTH Marketplace</h1>
-          <div className="text-sm font-semibold px-3 py-1 bg-gray-100 rounded-full text-gray-600">
-            Delivery Marketplace
+          <div className="flex items-center space-x-3">
+            <span className="text-xl font-black tracking-wider bg-gradient-to-r from-emerald-400 to-teal-500 bg-clip-text text-transparent">
+              MARKETPLACE
+            </span>
+            <span className="text-xs font-bold uppercase tracking-widest bg-slate-800 text-slate-400 px-2.5 py-1 rounded-md border border-slate-700">
+              Admin Controls Active
+            </span>
           </div>
         </div>
       </header>
 
-      {/* Main Content Layout */}
-      <main className="max-w-7xl mx-auto px-6 py-12 pr-[450px]">
-        <div className="mb-10">
-          <h2 className="text-3xl font-black text-gray-900 tracking-tight">Menu</h2>
-          <p className="text-gray-500 mt-2">Select items to build your delivery run.</p>
-        </div>
-
-        {loading ? (
-          <div className="text-gray-400 font-medium animate-pulse">Loading menu...</div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products.map((product) => (
-              <ProductCard key={product.product_id} product={product} />
-            ))}
+      {/* Grid Layout splits content from the persistent side panel */}
+      <div className="max-w-7xl mx-auto px-6 py-10 lg:flex lg:space-x-8">
+        {/* Main Content Area */}
+        <main className="flex-1 lg:max-w-[calc(100%-400px)]">
+          <div className="mb-8 border-b border-slate-800 pb-6">
+            <h2 className="text-2xl font-bold tracking-tight text-white">Live Product Catalog</h2>
+            <p className="text-slate-400 text-sm mt-1">
+              Synchronized directly with your active database ledger tables.
+            </p>
           </div>
-        )}
-      </main>
 
-      {/* Cart Drawer sits firmly on the right side */}
-      <CartDrawer />
+          {loading ? (
+            <div className="flex items-center space-x-2 text-slate-500 font-medium py-10">
+              <div className="w-4 h-4 rounded-full border-2 border-slate-500 border-t-transparent animate-spin"></div>
+              <span>Querying inventory tables...</span>
+            </div>
+          ) : products.length === 0 ? (
+            <div className="bg-slate-950 border border-dashed border-slate-800 rounded-xl p-12 text-center">
+              <p className="text-slate-400 font-medium">No active products found in the database.</p>
+              <p className="text-slate-600 text-sm mt-1">
+                Ensure rows exist in your Supabase 'products' table where 'is_visible' is true.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {products.map((product) => (
+                <ProductCard key={product.product_id} product={product} />
+              ))}
+            </div>
+          )}
+        </main>
+
+        {/* Floating Shopping Cart Sidebar */}
+        <aside className="w-full lg:w-[360px] shrink-0 mt-10 lg:mt-0">
+          <div className="sticky top-24 bg-slate-950 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
+            <CartDrawer />
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }
