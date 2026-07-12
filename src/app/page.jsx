@@ -10,7 +10,8 @@ export default function Home() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/products`);
+        // FIXED: Added /api/ to the fetch path
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/products`);
         if (response.ok) {
           const data = await response.json();
           setProducts(data);
