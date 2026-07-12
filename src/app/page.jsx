@@ -41,7 +41,7 @@ export default function Home() {
       {/* Top Banner Header */}
       <header className="sticky top-0 bg-white border-b border-gray-200 z-40">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-black tracking-tight text-black">FLIPOVA</h1>
+          <h1 className="text-2xl font-black tracking-tight text-black">HoTH Marketplace</h1>
           <div className="text-sm font-semibold px-3 py-1 bg-gray-100 rounded-full text-gray-600">
             Delivery Marketplace
           </div>
