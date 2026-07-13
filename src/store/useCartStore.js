@@ -2,9 +2,10 @@ import { create } from 'zustand';
 
 export const useCartStore = create((set, get) => ({
   items: [],
-  checkoutData: { raw_total: 0, discount_applied: 0, final_cash_total: 0 },
+  checkoutData: { raw_total: 0, final_cash_total: 0 },
 
   addToCart: async (product) => {
+    // Ensure product object includes tier_name from your DB
     const currentItems = get().items;
     const existing = currentItems.find(i => i.product_id === product.product_id);
     const updatedItems = existing 
