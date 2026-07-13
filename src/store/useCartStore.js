@@ -3,7 +3,6 @@ import { create } from 'zustand';
 export const useCartStore = create((set, get) => ({
   items: [],
   checkoutData: { raw_total: 0, discount_applied: 0, final_cash_total: 0 },
-  error: null,
 
   addToCart: async (product) => {
     const currentItems = get().items;
@@ -12,7 +11,7 @@ export const useCartStore = create((set, get) => ({
       ? currentItems.map(i => i.product_id === product.product_id ? {...i, qty: i.qty + 1} : i)
       : [...currentItems, { ...product, qty: 1 }];
 
-    // Set items immediately so they don't disappear
+    // Update UI immediately
     set({ items: updatedItems });
 
     try {
@@ -23,19 +22,12 @@ export const useCartStore = create((set, get) => ({
       });
       
       const data = await res.json();
-      
-      if (!res.ok) {
-        throw new Error(data.error || "Unknown server error");
+      // Only update checkoutData if we got a valid response
+      if (data && typeof data.raw_total !== 'undefined') {
+        set({ checkoutData: data });
       }
-      
-      set({ checkoutData: data, error: null });
     } catch (e) {
-      console.error("DEBUG - Cart Fail:", e.message);
-      set({ error: e.message });
+      console.error("Cart Math Error:", e);
     }
-  },
-
-  removeFromCart: (productId) => {
-    set({ items: get().items.filter(i => i.product_id !== productId) });
   }
 }));
