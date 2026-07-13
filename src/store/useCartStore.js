@@ -1,41 +1,41 @@
-import { create } from 'zustand';
+'use client';
+import { useEffect, useState } from 'react';
+import ProductCard from '../components/ProductCard';
+import CartDrawer from '../components/CartDrawer';
 
-export const useCartStore = create((set, get) => ({
-  items: [],
-  checkoutData: { raw_total: 0, discount_applied: 0, final_cash_total: 0 },
-  error: null,
+export default function Home() {
+  const [products, setProducts] = useState([]);
+  const [error, setError] = useState(null);
 
-  addToCart: async (product) => {
-    const currentItems = get().items;
-    const existing = currentItems.find(i => i.product_id === product.product_id);
-    const updatedItems = existing 
-      ? currentItems.map(i => i.product_id === product.product_id ? {...i, qty: i.qty + 1} : i)
-      : [...currentItems, { ...product, qty: 1 }];
-
-    // Set items immediately so they don't disappear
-    set({ items: updatedItems });
-
-    try {
-      const res = await fetch('https://delivery-api-jdto.onrender.com/api/cart/calculate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: updatedItems })
-      });
-      
-      const data = await res.json();
-      
-      if (!res.ok) {
-        throw new Error(data.error || "Unknown server error");
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const res = await fetch('https://delivery-api-jdto.onrender.com/api/admin/products');
+        if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+        const data = await res.json();
+        setProducts(data);
+      } catch (err) {
+        console.error("Fetch Error:", err);
+        setError(err.message);
       }
-      
-      set({ checkoutData: data, error: null });
-    } catch (e) {
-      console.error("DEBUG - Cart Fail:", e.message);
-      set({ error: e.message });
     }
-  },
+    fetchProducts();
+  }, []);
 
-  removeFromCart: (productId) => {
-    set({ items: get().items.filter(i => i.product_id !== productId) });
-  }
-}));
+  return (
+    <div className="min-h-screen bg-slate-900 text-slate-100 p-8">
+      <header className="mb-10 text-emerald-400 font-black text-2xl tracking-widest">BRANCH</header>
+      {error && <div className="text-red-500 font-bold mb-4">Error loading inventory: {error}</div>}
+      <div className="flex gap-8">
+        <main className="flex-1 grid grid-cols-2 gap-6">
+          {products.length > 0 ? (
+            products.map((p) => <ProductCard key={p.product_id} product={p} />)
+          ) : (
+            <div className="text-slate-500">No products found or still loading...</div>
+          )}
+        </main>
+        <aside className="w-80"><CartDrawer /></aside>
+      </div>
+    </div>
+  );
+}
