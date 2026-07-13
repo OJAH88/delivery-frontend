@@ -2,8 +2,7 @@ import { create } from 'zustand';
 
 export const useCartStore = create((set, get) => ({
   items: [],
-  checkoutData: { raw_total: 0, final_cash_total: 0 },
-  isLoading: false,
+  checkoutData: { raw_total: 0, discount_applied: 0, final_cash_total: 0 },
 
   addToCart: async (product) => {
     const currentItems = get().items;
@@ -12,7 +11,7 @@ export const useCartStore = create((set, get) => ({
       ? currentItems.map(i => i.product_id === product.product_id ? {...i, qty: i.qty + 1} : i)
       : [...currentItems, { ...product, qty: 1 }];
 
-    set({ items: updatedItems, isLoading: true });
+    set({ items: updatedItems });
 
     try {
       const res = await fetch('https://delivery-api-jdto.onrender.com/api/cart/calculate', {
@@ -20,15 +19,11 @@ export const useCartStore = create((set, get) => ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items: updatedItems })
       });
+      if (!res.ok) throw new Error("Server error");
       const data = await res.json();
-      set({ checkoutData: data, isLoading: false });
+      set({ checkoutData: data });
     } catch (e) {
-      console.error("Cart Error:", e);
-      set({ isLoading: false });
+      console.error("Cart Update Failed:", e);
     }
-  },
-
-  removeFromCart: (productId) => {
-    set({ items: get().items.filter(i => i.product_id !== productId) });
   }
 }));
