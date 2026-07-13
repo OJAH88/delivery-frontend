@@ -7,7 +7,6 @@ export default function Home() {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    // This matches the route in main.py exactly
     fetch('https://delivery-api-jdto.onrender.com/api/admin/products')
       .then(res => res.json())
       .then(data => setProducts(Array.isArray(data) ? data : []))
@@ -16,10 +15,19 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 p-8">
-      <main className="grid grid-cols-2 gap-6">
-        {products.map((p) => <ProductCard key={p.product_id} product={p} />)}
-      </main>
-      <CartDrawer />
+      <header className="mb-10 text-emerald-400 font-black text-2xl tracking-widest">BRANCH</header>
+      
+      {/* THIS IS THE LAYOUT FIX: flex-row ensures items are side-by-side */}
+      <div className="flex flex-row gap-8 items-start">
+        <main className="flex-1 grid grid-cols-2 gap-6">
+          {products.map((p) => <ProductCard key={p.product_id} product={p} />)}
+        </main>
+        
+        {/* Force the drawer to stay as a sidebar */}
+        <aside className="w-80 shrink-0 sticky top-8">
+          <CartDrawer />
+        </aside>
+      </div>
     </div>
   );
 }
