@@ -15,7 +15,7 @@ export const useCartStore = create((set, get) => ({
     set({ items: updatedItems, isLoading: true });
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/cart/calculate`, {
+      const response = await fetch('${process.env.NEXT_PUBLIC_API_URL}/api/cart/calculate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items: updatedItems })
