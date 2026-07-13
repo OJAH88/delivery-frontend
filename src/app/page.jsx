@@ -7,7 +7,7 @@ export default function Home() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const fetched = useRef(false);
-
+  
   useEffect(() => {
     if (fetched.current) return;
     fetched.current = true;
