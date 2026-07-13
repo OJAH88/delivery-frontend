@@ -11,7 +11,6 @@ export const useCartStore = create((set, get) => ({
       ? currentItems.map(i => i.product_id === product.product_id ? {...i, qty: i.qty + 1} : i)
       : [...currentItems, { ...product, qty: 1 }];
 
-    // Update UI immediately
     set({ items: updatedItems });
 
     try {
@@ -20,14 +19,10 @@ export const useCartStore = create((set, get) => ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items: updatedItems })
       });
-      
       const data = await res.json();
-      // Only update checkoutData if we got a valid response
-      if (data && typeof data.raw_total !== 'undefined') {
-        set({ checkoutData: data });
-      }
+      set({ checkoutData: data });
     } catch (e) {
-      console.error("Cart Math Error:", e);
+      console.error("Cart Error:", e);
     }
   }
 }));
