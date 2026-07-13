@@ -8,7 +8,6 @@ export const useCartStore = create((set, get) => ({
   addToCart: async (product) => {
     const currentItems = get().items;
     const existing = currentItems.find(i => i.product_id === product.product_id);
-    
     const updatedItems = existing 
       ? currentItems.map(i => i.product_id === product.product_id ? {...i, qty: i.qty + 1} : i)
       : [...currentItems, { ...product, qty: 1 }];
@@ -21,9 +20,6 @@ export const useCartStore = create((set, get) => ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items: updatedItems })
       });
-      
-      if (!res.ok) throw new Error(`Server status: ${res.status}`);
-      
       const data = await res.json();
       set({ checkoutData: data, isLoading: false });
     } catch (e) {
