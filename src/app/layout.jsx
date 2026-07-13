@@ -1,7 +1,7 @@
 import './globals.css';
 
 export const metadata = {
-  title: 'Branch | Cannabis Delivery',
+  title: 'HoTH | NYC Delivery',
   description: 'Orders, Inventory, and Financials',
 };
 
