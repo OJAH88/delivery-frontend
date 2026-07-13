@@ -5,7 +5,6 @@ export const useCartStore = create((set, get) => ({
   checkoutData: { raw_total: 0, final_cash_total: 0 },
 
   addToCart: async (product) => {
-    // Ensure product object includes tier_name from your DB
     const currentItems = get().items;
     const existing = currentItems.find(i => i.product_id === product.product_id);
     const updatedItems = existing 
